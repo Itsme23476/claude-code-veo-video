@@ -1,0 +1,7 @@
+.veo-project
+*.mp4
+*.mp4.op
+*.op
+__pycache__/
+*.pyc
+.DS_Store
