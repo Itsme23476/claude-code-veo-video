@@ -28,6 +28,13 @@ def post(url: str, body: dict, tok: str) -> dict:
         sys.exit(f"❌ HTTP {e.code}: {e.read().decode()[:600]}")
 
 
+def load_image(path: str) -> dict:
+    import mimetypes
+    mime = mimetypes.guess_type(path)[0] or "image/png"
+    with open(path, "rb") as f:
+        return {"bytesBase64Encoded": base64.b64encode(f.read()).decode(), "mimeType": mime}
+
+
 def extract_and_save(resp: dict, out: str) -> bool:
     """Handle the possible Veo response shapes; save mp4 if bytes are present."""
     print("  response keys:", list(resp.keys()))
@@ -67,6 +74,8 @@ def main() -> None:
     p.add_argument("--no-audio", action="store_true")
     p.add_argument("--samples", type=int, default=1)
     p.add_argument("--output", default="veo_output.mp4")
+    p.add_argument("--image", help="starting (first-frame) image path — image-to-video")
+    p.add_argument("--last-frame", help="ending (last-frame) image path — Veo 3.1 first->last interpolation")
     p.add_argument("--resume", help="path to a saved .op file to fetch an existing generation")
     a = p.parse_args()
 
@@ -86,12 +95,18 @@ def main() -> None:
     else:
         if not a.prompt:
             sys.exit("❌ --prompt is required")
-        print(f"→ submitting to {a.model} ({a.duration}s, {a.resolution}, audio={not a.no_audio})")
+        extras = ("" + (", +image" if a.image else "") + (", +lastFrame" if a.last_frame else ""))
+        print(f"→ submitting to {a.model} ({a.duration}s, {a.resolution}, audio={not a.no_audio}{extras})")
         params = {"sampleCount": a.samples, "durationSeconds": a.duration,
                   "aspectRatio": a.aspect, "resolution": a.resolution,
                   "generateAudio": not a.no_audio}
+        instance = {"prompt": a.prompt}
+        if a.image:
+            instance["image"] = load_image(a.image)
+        if a.last_frame:
+            instance["lastFrame"] = load_image(a.last_frame)
         op = post(base + ":predictLongRunning",
-                  {"instances": [{"prompt": a.prompt}], "parameters": params}, tok)
+                  {"instances": [instance], "parameters": params}, tok)
         opname = op["name"]
         with open(a.output + ".op", "w") as f:
             f.write(opname)

@@ -25,6 +25,33 @@ function cost() {
 $("#model").addEventListener("change", cost);
 cost();
 
+// --- optional start/end frame uploads (image-to-video) ---
+let startData = null, endData = null;
+function upslot(slotId, inputId, thumbId, xId, label, set) {
+  const slot = document.getElementById(slotId), inp = document.getElementById(inputId),
+        thumb = document.getElementById(thumbId), x = document.getElementById(xId);
+  slot.addEventListener("click", (e) => {
+    if (e.target === x) {
+      set(null); inp.value = ""; thumb.style.backgroundImage = "";
+      thumb.classList.remove("set"); thumb.textContent = label; x.hidden = true;
+      return;
+    }
+    inp.click();
+  });
+  inp.addEventListener("change", () => {
+    const f = inp.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      set(r.result);
+      thumb.style.backgroundImage = `url(${r.result})`;
+      thumb.classList.add("set"); thumb.textContent = ""; x.hidden = false;
+    };
+    r.readAsDataURL(f);
+  });
+}
+upslot("startSlot", "startImg", "startThumb", "startX", "+ Start", (d) => (startData = d));
+upslot("endSlot", "endImg", "endThumb", "endX", "+ End", (d) => (endData = d));
+
 const esc = (s) => s.replace(/[&<>"]/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -37,6 +64,8 @@ async function generate() {
     prompt, model: $("#model").value, duration: Number(dur()),
     aspect: asp(), resolution: res(), audio: $("#audio").checked,
   };
+  if (startData) body.startImage = startData;
+  if (endData) body.endImage = endData;
   $("#go").disabled = true;
   $("#glabel").textContent = "Generating…";
   $("#empty")?.remove();

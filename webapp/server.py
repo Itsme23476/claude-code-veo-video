@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Local web UI backend for Veo video generation. Stdlib only — no pip installs.
 Serves the front-end and runs the validated generate_veo.py per request (async jobs)."""
-import json, os, subprocess, sys, uuid
+import base64, json, os, subprocess, sys, uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
@@ -20,6 +20,16 @@ def project():
         if os.path.exists(c):
             return open(c).read().strip()
     return None
+
+
+def _save_data_url(data_url, base):
+    header, b64 = data_url.split(",", 1)
+    ext = "jpg" if ("jpeg" in header or "jpg" in header) else "png"
+    p = base + "." + ext
+    with open(p, "wb") as f:
+        f.write(base64.b64decode(b64))
+    return p
+
 
 JOBS = {}  # id -> {proc, output}
 CT = {"html": "text/html", "css": "text/css", "js": "application/javascript"}
@@ -80,6 +90,10 @@ class H(BaseHTTPRequestHandler):
                "--output", out]
         if not body.get("audio", True):
             cmd.append("--no-audio")
+        if body.get("startImage"):
+            cmd += ["--image", _save_data_url(body["startImage"], os.path.join(OUTPUTS, jid + "_start"))]
+        if body.get("endImage"):
+            cmd += ["--last-frame", _save_data_url(body["endImage"], os.path.join(OUTPUTS, jid + "_end"))]
         JOBS[jid] = {"proc": subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE),
                      "output": out}
         self._s(200, json.dumps({"jobId": jid}))

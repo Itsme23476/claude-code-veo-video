@@ -32,6 +32,11 @@ Options:
 - `--resolution` 720p | 1080p
 - `--no-audio`  (audio is ON by default — Veo 3's signature feature)
 - `--samples` N  (generate N variations)
+- `--image <path>`  (**image-to-video** — animate starting FROM this image)
+- `--last-frame <path>`  (**first→last interpolation** — also end ON this image; Veo 3.1)
+
+For "turn this photo into a video", "animate this image", or "morph from A to B", pass `--image`
+(and optionally `--last-frame`). Both are real frames the model interpolates from/to.
 
 The script prints and saves the operation id to `<output>.mp4.op`; if a run is interrupted, resume with
 `--resume <output>.mp4.op` (no re-charge).

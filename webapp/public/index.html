@@ -34,6 +34,20 @@
 
     <label class="row"><span>Audio</span><input type="checkbox" id="audio" checked></label>
 
+    <label class="lbl">Frames — optional (image → video)</label>
+    <div class="uploads">
+      <div class="upslot" id="startSlot">
+        <input type="file" accept="image/*" id="startImg" hidden>
+        <div class="thumb" id="startThumb">+ Start</div>
+        <b class="x" id="startX" hidden>×</b>
+      </div>
+      <div class="upslot" id="endSlot">
+        <input type="file" accept="image/*" id="endImg" hidden>
+        <div class="thumb" id="endThumb">+ End</div>
+        <b class="x" id="endX" hidden>×</b>
+      </div>
+    </div>
+
     <button id="go" class="generate"><span id="glabel">Generate</span> <span id="cost" class="cost"></span></button>
     <div class="hint">Billed to your Google Cloud $300 credit · Veo bills per second</div>
   </aside>

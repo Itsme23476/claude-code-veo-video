@@ -2,6 +2,9 @@
 *.mp4
 *.mp4.op
 *.op
+*.png
+*.jpg
+*.jpeg
 webapp/outputs/
 __pycache__/
 *.pyc
