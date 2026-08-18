@@ -19,21 +19,23 @@ const RATE = {
   "veo-3.0-generate-001": 0.40,
 };
 function cost() {
-  const c = (RATE[$("#model").value] || 0.15) * Number(dur());
+  const eff = extData ? 7 : (refData.some(Boolean) ? 8 : Number(dur()));
+  const c = (RATE[$("#model").value] || 0.15) * eff;
   $("#cost").textContent = "~$" + c.toFixed(2);
 }
 $("#model").addEventListener("change", cost);
-cost();
 
-// --- optional start/end frame uploads (image-to-video) ---
-let startData = null, endData = null;
+// --- optional inputs: start/end frames, reference images, video extension ---
+let startData = null, endData = null, extData = null;
+const refData = [null, null, null];
+
 function upslot(slotId, inputId, thumbId, xId, label, set) {
   const slot = document.getElementById(slotId), inp = document.getElementById(inputId),
         thumb = document.getElementById(thumbId), x = document.getElementById(xId);
   slot.addEventListener("click", (e) => {
     if (e.target === x) {
       set(null); inp.value = ""; thumb.style.backgroundImage = "";
-      thumb.classList.remove("set"); thumb.textContent = label; x.hidden = true;
+      thumb.classList.remove("set"); thumb.textContent = label; x.hidden = true; cost();
       return;
     }
     inp.click();
@@ -43,14 +45,26 @@ function upslot(slotId, inputId, thumbId, xId, label, set) {
     const r = new FileReader();
     r.onload = () => {
       set(r.result);
-      thumb.style.backgroundImage = `url(${r.result})`;
-      thumb.classList.add("set"); thumb.textContent = ""; x.hidden = false;
+      if (f.type.startsWith("video/")) {
+        thumb.textContent = "✓ " + f.name.slice(0, 22);
+        thumb.classList.remove("set"); thumb.style.backgroundImage = "";
+      } else {
+        thumb.style.backgroundImage = `url(${r.result})`;
+        thumb.classList.add("set"); thumb.textContent = "";
+      }
+      x.hidden = false; cost();
     };
     r.readAsDataURL(f);
   });
 }
 upslot("startSlot", "startImg", "startThumb", "startX", "+ Start", (d) => (startData = d));
 upslot("endSlot", "endImg", "endThumb", "endX", "+ End", (d) => (endData = d));
+upslot("ref0Slot", "ref0Img", "ref0Thumb", "ref0X", "+ Ref", (d) => (refData[0] = d));
+upslot("ref1Slot", "ref1Img", "ref1Thumb", "ref1X", "+ Ref", (d) => (refData[1] = d));
+upslot("ref2Slot", "ref2Img", "ref2Thumb", "ref2X", "+ Ref", (d) => (refData[2] = d));
+upslot("extSlot", "extVid", "extThumb", "extX", "+ Video to continue", (d) => (extData = d));
+const refType = group("refType");
+cost();
 
 const esc = (s) => s.replace(/[&<>"]/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -66,6 +80,9 @@ async function generate() {
   };
   if (startData) body.startImage = startData;
   if (endData) body.endImage = endData;
+  const refs = refData.filter(Boolean);
+  if (refs.length) { body.referenceImages = refs; body.referenceType = refType(); }
+  if (extData) body.extendVideo = extData;
   $("#go").disabled = true;
   $("#glabel").textContent = "Generating…";
   $("#empty")?.remove();

@@ -24,7 +24,8 @@ def project():
 
 def _save_data_url(data_url, base):
     header, b64 = data_url.split(",", 1)
-    ext = "jpg" if ("jpeg" in header or "jpg" in header) else "png"
+    mime = header.split(":", 1)[1].split(";", 1)[0] if ":" in header else "image/png"
+    ext = mime.split("/")[-1].replace("jpeg", "jpg").replace("quicktime", "mov")
     p = base + "." + ext
     with open(p, "wb") as f:
         f.write(base64.b64decode(b64))
@@ -94,6 +95,12 @@ class H(BaseHTTPRequestHandler):
             cmd += ["--image", _save_data_url(body["startImage"], os.path.join(OUTPUTS, jid + "_start"))]
         if body.get("endImage"):
             cmd += ["--last-frame", _save_data_url(body["endImage"], os.path.join(OUTPUTS, jid + "_end"))]
+        for i, du in enumerate((body.get("referenceImages") or [])[:3]):
+            cmd += ["--reference-image", _save_data_url(du, os.path.join(OUTPUTS, jid + f"_ref{i}"))]
+        if body.get("referenceType"):
+            cmd += ["--reference-type", body["referenceType"]]
+        if body.get("extendVideo"):
+            cmd += ["--extend-video", _save_data_url(body["extendVideo"], os.path.join(OUTPUTS, jid + "_extend"))]
         JOBS[jid] = {"proc": subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE),
                      "output": out}
         self._s(200, json.dumps({"jobId": jid}))

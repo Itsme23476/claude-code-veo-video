@@ -48,6 +48,17 @@
       </div>
     </div>
 
+    <label class="lbl">Reference images — optional, up to 3 (locks 8s)</label>
+    <div class="uploads">
+      <div class="upslot" id="ref0Slot"><input type="file" accept="image/*" id="ref0Img" hidden><div class="thumb" id="ref0Thumb">+ Ref</div><b class="x" id="ref0X" hidden>×</b></div>
+      <div class="upslot" id="ref1Slot"><input type="file" accept="image/*" id="ref1Img" hidden><div class="thumb" id="ref1Thumb">+ Ref</div><b class="x" id="ref1X" hidden>×</b></div>
+      <div class="upslot" id="ref2Slot"><input type="file" accept="image/*" id="ref2Img" hidden><div class="thumb" id="ref2Thumb">+ Ref</div><b class="x" id="ref2X" hidden>×</b></div>
+    </div>
+    <div class="pills" id="refType"><button data-v="asset" class="on">Subject</button><button data-v="style">Style</button></div>
+
+    <label class="lbl">Extend a video — optional (+7s)</label>
+    <div class="upslot wide" id="extSlot"><input type="file" accept="video/*" id="extVid" hidden><div class="thumb" id="extThumb">+ Video to continue</div><b class="x" id="extX" hidden>×</b></div>
+
     <button id="go" class="generate"><span id="glabel">Generate</span> <span id="cost" class="cost"></span></button>
     <div class="hint">Billed to your Google Cloud $300 credit · Veo bills per second</div>
   </aside>

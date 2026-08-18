@@ -76,6 +76,10 @@ def main() -> None:
     p.add_argument("--output", default="veo_output.mp4")
     p.add_argument("--image", help="starting (first-frame) image path — image-to-video")
     p.add_argument("--last-frame", help="ending (last-frame) image path — Veo 3.1 first->last interpolation")
+    p.add_argument("--reference-image", action="append", default=[],
+                   help="reference image path (repeatable, up to 3) — subject/style consistency")
+    p.add_argument("--reference-type", default="asset", choices=["asset", "style"])
+    p.add_argument("--extend-video", help="path to a video to extend/continue")
     p.add_argument("--resume", help="path to a saved .op file to fetch an existing generation")
     a = p.parse_args()
 
@@ -95,16 +99,27 @@ def main() -> None:
     else:
         if not a.prompt:
             sys.exit("❌ --prompt is required")
-        extras = ("" + (", +image" if a.image else "") + (", +lastFrame" if a.last_frame else ""))
+        extras = ("" + (", +image" if a.image else "") + (", +lastFrame" if a.last_frame else "")
+                  + (f", +{len(a.reference_image)}ref" if a.reference_image else "")
+                  + (", +extend" if a.extend_video else ""))
         print(f"→ submitting to {a.model} ({a.duration}s, {a.resolution}, audio={not a.no_audio}{extras})")
         params = {"sampleCount": a.samples, "durationSeconds": a.duration,
                   "aspectRatio": a.aspect, "resolution": a.resolution,
                   "generateAudio": not a.no_audio}
+        if a.extend_video:
+            params["durationSeconds"] = 7   # Veo video-extension requires a 7s output
+        elif a.reference_image:
+            params["durationSeconds"] = 8   # Veo reference-to-video requires an 8s output
         instance = {"prompt": a.prompt}
         if a.image:
             instance["image"] = load_image(a.image)
         if a.last_frame:
             instance["lastFrame"] = load_image(a.last_frame)
+        if a.reference_image:
+            instance["referenceImages"] = [{"image": load_image(p), "referenceType": a.reference_type}
+                                           for p in a.reference_image[:3]]
+        if a.extend_video:
+            instance["video"] = load_image(a.extend_video)
         op = post(base + ":predictLongRunning",
                   {"instances": [instance], "parameters": params}, tok)
         opname = op["name"]

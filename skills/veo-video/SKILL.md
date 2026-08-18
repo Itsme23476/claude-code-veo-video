@@ -34,9 +34,15 @@ Options:
 - `--samples` N  (generate N variations)
 - `--image <path>`  (**image-to-video** — animate starting FROM this image)
 - `--last-frame <path>`  (**first→last interpolation** — also end ON this image; Veo 3.1)
+- `--reference-image <path>` (repeatable, up to 3) + `--reference-type asset|style` — keep a
+  **subject** (`asset`) or **style** consistent across the video (auto-forces 8s output)
+- `--extend-video <path>` — **continue an existing clip** by +7s (auto-forces 7s; total = input + 7s)
 
-For "turn this photo into a video", "animate this image", or "morph from A to B", pass `--image`
-(and optionally `--last-frame`). Both are real frames the model interpolates from/to.
+Pick the right one for the request:
+- "turn this photo into a video" / "animate this image" → `--image` (optionally `--last-frame` to morph A→B)
+- "keep this character/product/style consistent" → `--reference-image` (up to 3, `--reference-type asset|style`)
+- "make it longer" / "continue this video" → `--extend-video`
+The tool auto-sets the duration each feature requires, so you don't have to.
 
 The script prints and saves the operation id to `<output>.mp4.op`; if a run is interrupted, resume with
 `--resume <output>.mp4.op` (no re-charge).
