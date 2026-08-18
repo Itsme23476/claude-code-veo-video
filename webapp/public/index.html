@@ -59,6 +59,27 @@
     <label class="lbl">Extend a video — optional (+7s)</label>
     <div class="upslot wide" id="extSlot"><input type="file" accept="video/*" id="extVid" hidden><div class="thumb" id="extThumb">+ Video to continue</div><b class="x" id="extX" hidden>×</b></div>
 
+    <details class="adv">
+      <summary>Advanced</summary>
+      <label class="lbl">Negative prompt</label>
+      <textarea id="negPrompt" placeholder="What to avoid — e.g. blurry, text, watermark"></textarea>
+      <div class="advrow">
+        <div>
+          <label class="lbl">Seed</label>
+          <input type="number" id="seed" placeholder="random">
+        </div>
+        <div>
+          <label class="lbl">People</label>
+          <select id="personGen">
+            <option value="">Default</option>
+            <option value="allow_all">Allow all</option>
+            <option value="allow_adult">Adults only</option>
+            <option value="dont_allow">Don't allow</option>
+          </select>
+        </div>
+      </div>
+    </details>
+
     <button id="go" class="generate"><span id="glabel">Generate</span> <span id="cost" class="cost"></span></button>
     <div class="hint">Billed to your Google Cloud $300 credit · Veo bills per second</div>
   </aside>

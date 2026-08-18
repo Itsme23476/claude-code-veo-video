@@ -83,6 +83,9 @@ async function generate() {
   const refs = refData.filter(Boolean);
   if (refs.length) { body.referenceImages = refs; body.referenceType = refType(); }
   if (extData) body.extendVideo = extData;
+  const neg = $("#negPrompt").value.trim(); if (neg) body.negativePrompt = neg;
+  const sd = $("#seed").value.trim(); if (sd) body.seed = Number(sd);
+  const pg = $("#personGen").value; if (pg) body.personGeneration = pg;
   $("#go").disabled = true;
   $("#glabel").textContent = "Generating…";
   $("#empty")?.remove();

@@ -101,6 +101,12 @@ class H(BaseHTTPRequestHandler):
             cmd += ["--reference-type", body["referenceType"]]
         if body.get("extendVideo"):
             cmd += ["--extend-video", _save_data_url(body["extendVideo"], os.path.join(OUTPUTS, jid + "_extend"))]
+        if body.get("negativePrompt"):
+            cmd += ["--negative-prompt", body["negativePrompt"]]
+        if body.get("seed") not in (None, ""):
+            cmd += ["--seed", str(int(body["seed"]))]
+        if body.get("personGeneration"):
+            cmd += ["--person-generation", body["personGeneration"]]
         JOBS[jid] = {"proc": subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE),
                      "output": out}
         self._s(200, json.dumps({"jobId": jid}))

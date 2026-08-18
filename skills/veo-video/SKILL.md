@@ -44,6 +44,9 @@ Pick the right one for the request:
 - "make it longer" / "continue this video" → `--extend-video`
 The tool auto-sets the duration each feature requires, so you don't have to.
 
+Advanced (optional): `--negative-prompt "..."` (what to avoid), `--seed N` (reproducible output),
+`--person-generation allow_all|allow_adult|dont_allow`.
+
 The script prints and saves the operation id to `<output>.mp4.op`; if a run is interrupted, resume with
 `--resume <output>.mp4.op` (no re-charge).
 

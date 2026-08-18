@@ -80,6 +80,10 @@ def main() -> None:
                    help="reference image path (repeatable, up to 3) — subject/style consistency")
     p.add_argument("--reference-type", default="asset", choices=["asset", "style"])
     p.add_argument("--extend-video", help="path to a video to extend/continue")
+    p.add_argument("--negative-prompt", help="what to avoid in the video")
+    p.add_argument("--seed", type=int, help="seed for reproducible output")
+    p.add_argument("--person-generation", choices=["allow_all", "allow_adult", "dont_allow"],
+                   help="person-generation policy")
     p.add_argument("--resume", help="path to a saved .op file to fetch an existing generation")
     a = p.parse_args()
 
@@ -110,6 +114,12 @@ def main() -> None:
             params["durationSeconds"] = 7   # Veo video-extension requires a 7s output
         elif a.reference_image:
             params["durationSeconds"] = 8   # Veo reference-to-video requires an 8s output
+        if a.negative_prompt:
+            params["negativePrompt"] = a.negative_prompt
+        if a.seed is not None:
+            params["seed"] = a.seed
+        if a.person_generation:
+            params["personGeneration"] = a.person_generation
         instance = {"prompt": a.prompt}
         if a.image:
             instance["image"] = load_image(a.image)
