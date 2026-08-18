@@ -33,6 +33,16 @@ Now open Claude Code and say: **"generate a video of a golden retriever puppy ru
 
 See [PROMPT.md](PROMPT.md) — hand it to a fresh Claude Code and it does the whole setup + first video.
 
+## Optional: a Higgsfield-style web UI
+
+Prefer buttons over chat? Start the bundled interface:
+```bash
+./webapp/start.sh    # opens http://localhost:8787
+```
+A dark control panel (prompt, model, duration, aspect — `9:16` for Shorts — resolution, audio) with a
+Generate button and a gallery of your clips, all calling the same Veo pipeline on your credit. During
+setup Claude asks whether you want this; you can also skip it and just use the chat skill.
+
 ## Models & cost
 
 Veo bills **per second** (~$0.15/s fast → ~$0.40/s standard, audio included). ~**$1.20 for an 8s fast

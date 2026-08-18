@@ -10,6 +10,8 @@ Paste into a fresh **Claude Code** session — after you've created a Google Clo
 > 1. Run `./connect-vertex.sh` — I'll approve the Google sign-in in the browser (this authorizes you to
 >    create my project and enable Vertex AI).
 > 2. Run `./install.sh` to install the `veo-video` skill.
+> 3. **Ask me whether I also want the optional Higgsfield-style web interface.** If yes, run
+>    `./webapp/start.sh` (a local page to generate videos with a visual UI); if no, skip it.
 >
 > Then **ask me what video I want**, turn it into a vivid cinematic prompt, and generate it with
 > `veo-3.1-fast-generate-001` — **tell me the rough cost first** (Veo bills per second). Save the `.mp4`

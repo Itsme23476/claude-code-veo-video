@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veo Studio</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <div class="brand"><span class="logo">◈</span> Veo Studio <span class="free">FREE</span></div>
+
+    <label class="lbl">Prompt</label>
+    <textarea id="prompt" placeholder="Describe your video — e.g. 'a red fox running through fresh snow, cinematic, slow motion, golden hour'"></textarea>
+
+    <label class="lbl">Model</label>
+    <select id="model">
+      <option value="veo-3.1-fast-generate-001">Veo 3.1 Fast — fast &amp; cheap (default)</option>
+      <option value="veo-3.1-generate-001">Veo 3.1 — highest quality</option>
+      <option value="veo-3.1-lite-generate-001">Veo 3.1 Lite — cheapest</option>
+      <option value="veo-3.0-fast-generate-001">Veo 3.0 Fast</option>
+      <option value="veo-3.0-generate-001">Veo 3.0</option>
+    </select>
+
+    <label class="lbl">Duration</label>
+    <div class="pills" id="duration"><button data-v="4" class="on">4s</button><button data-v="6">6s</button><button data-v="8">8s</button></div>
+
+    <label class="lbl">Aspect ratio</label>
+    <div class="pills" id="aspect"><button data-v="16:9" class="on">16:9</button><button data-v="9:16">9:16</button></div>
+
+    <label class="lbl">Resolution</label>
+    <div class="pills" id="resolution"><button data-v="720p" class="on">720p</button><button data-v="1080p">1080p</button></div>
+
+    <label class="row"><span>Audio</span><input type="checkbox" id="audio" checked></label>
+
+    <button id="go" class="generate"><span id="glabel">Generate</span> <span id="cost" class="cost"></span></button>
+    <div class="hint">Billed to your Google Cloud $300 credit · Veo bills per second</div>
+  </aside>
+
+  <main class="stage">
+    <header class="stage-head">
+      <h1>Make videos in one click</h1>
+      <p>Google Veo 3 · running on your own Google Cloud credit</p>
+    </header>
+    <div class="gallery" id="gallery">
+      <div class="empty" id="empty">Your generated videos will appear here.</div>
+    </div>
+  </main>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
